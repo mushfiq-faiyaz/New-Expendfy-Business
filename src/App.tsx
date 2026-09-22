@@ -1,73 +1,58 @@
-import React from 'react';
-import { Navbar } from './components/Navbar';
-import { Sidebar } from './components/Sidebar';
-import { SummaryBar } from './components/SummaryBar';
-import { ToolbarRow } from './components/ToolbarRow';
-import { CalendarCard } from './components/CalendarCard';
+import { CalendarCheck, Info, Plus } from 'lucide-react'
+import { Calendar } from './components/Calendar'
+import { Header } from './components/Header'
+import { Sidebar } from './components/Sidebar'
+import { QuickEntryModal } from './components/QuickEntryModal'
+import { SideDrawer } from './components/SideDrawer'
+import { ActivitySheet } from './components/ActivitySheet'
+import { EditHistoryModal } from './components/EditHistoryModal'
+import { EntriesGlanceModal } from './components/EntriesGlanceModal'
+import { ExpenseSheet } from './components/ExpenseSheet'
+import { IncomeSheet } from './components/IncomeSheet'
 
-// ==========================================
-// PLACEHOLDER DATA
-// ==========================================
-export const summaryData = [
-  {
-    title: '16 September 2026',
-    subtitle: null,
-    isAmberTitle: false,
-    rows: [
-      { label: 'Sales', amount: '৳0.00', color: 'text-emerald-400' },
-      { label: 'Buy', amount: '৳0.00', color: 'text-amber-400' },
-      { label: 'Expense', amount: '৳0.00', color: 'text-rose-400' },
-    ],
-    profit: { label: 'Profit', amount: '৳0.00', color: 'text-gray-300' },
-  },
-  {
-    title: 'Monthly',
-    subtitle: 'Sep 2026',
-    isAmberTitle: true,
-    rows: [
-      { label: 'Sales', amount: '৳0.00', color: 'text-emerald-400' },
-      { label: 'Buy', amount: '৳0.00', color: 'text-amber-400' },
-      { label: 'Expense', amount: '৳0.00', color: 'text-rose-400' },
-    ],
-    profit: { label: 'Profit', amount: '৳0.00', color: 'text-gray-300' },
-  },
-  {
-    title: 'Yearly',
-    subtitle: '2026',
-    isAmberTitle: true,
-    rows: [
-      { label: 'Sales', amount: '৳0.00', color: 'text-emerald-400' },
-      { label: 'Buy', amount: '৳0.00', color: 'text-amber-400' },
-      { label: 'Expense', amount: '৳0.00', color: 'text-rose-400' },
-    ],
-    profit: { label: 'Profit', amount: '৳0.00', color: 'text-gray-300' },
-  },
-];
-
-export const calendarDays = [
-  { day: null }, { day: null }, // Sun, Mon
-  { day: 1 }, { day: 2 }, { day: 3 }, { day: 4 }, { day: 5 }, { day: 6 }, { day: 7 },
-  { day: 8 }, { day: 9 }, { day: 10 }, { day: 11 }, { day: 12 }, { day: 13 }, { day: 14 },
-  { day: 15 }, { day: 16, isToday: true }, { day: 17 }, { day: 18 }, { day: 19 }, { day: 20 }, { day: 21 },
-  { day: 22 }, { day: 23 }, { day: 24 }, { day: 25 }, { day: 26 }, { day: 27 }, { day: 28 },
-  { day: 29 }, { day: 30 },
-];
+// ─── Static UI-only mount toggles ────────────────────────────────────────────
+// Flip any of these to `true` to display that overlay for a screenshot.
+const SHOW_QUICK_ENTRY   = true
+const SHOW_SIDE_DRAWER   = false
+const SHOW_ACTIVITY      = false
+const SHOW_EDIT_HISTORY  = false
+const SHOW_GLANCE        = false
+const SHOW_EXPENSE_SHEET = false
+const SHOW_INCOME_SHEET  = false
 
 export default function App() {
   return (
-    <div className="flex flex-col h-screen bg-[#0a0e1a] text-white font-sans overflow-hidden">
-      <Navbar />
-      <div className="flex flex-1 overflow-hidden">
-        <Sidebar />
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
-          <SummaryBar data={summaryData} />
-          <ToolbarRow />
-          <CalendarCard days={calendarDays} />
-          <div className="text-center text-sm text-gray-500 mt-6 pb-8">
-            No entries for this day.
+    <div className="app">
+      <Sidebar />
+
+      <div className="app-body">
+        <Header />
+
+        <main className="app-main">
+          <div className="calendar-action-bar">
+            <button type="button" className="calendar-select-btn" aria-label="Select dates" title="Select dates">
+              <CalendarCheck size={17} strokeWidth={1.9} />
+            </button>
+            <button type="button" className="calendar-quick-info-btn" aria-label="Glance past entries" title="Glance past entries">
+              <Info size={17} strokeWidth={1.9} />
+            </button>
+            <button type="button" className="calendar-quick-add-btn" aria-label="Add entry" title="Add entry">
+              <Plus size={18} strokeWidth={1.8} />
+            </button>
           </div>
+
+          <Calendar />
         </main>
       </div>
+
+      {/* ── Overlays (all UI-only, no behavior) ── */}
+      {SHOW_QUICK_ENTRY   && <QuickEntryModal />}
+      {SHOW_SIDE_DRAWER   && <SideDrawer />}
+      {SHOW_ACTIVITY      && <ActivitySheet title="Today's Activity" />}
+      {SHOW_EDIT_HISTORY  && <EditHistoryModal side="expense" />}
+      {SHOW_GLANCE        && <EntriesGlanceModal />}
+      {SHOW_EXPENSE_SHEET && <ExpenseSheet />}
+      {SHOW_INCOME_SHEET  && <IncomeSheet />}
     </div>
-  );
+  )
 }

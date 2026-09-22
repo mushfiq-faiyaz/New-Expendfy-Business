@@ -1,15 +1,28 @@
-import React from 'react';
-import { Calendar } from 'lucide-react';
+import { Calendar as CalendarIcon } from 'lucide-react'
+import { ExpendfyLogo } from './ExpendfyLogo'
+import { BrandWordmark } from './BrandWordmark'
 
 export function Sidebar() {
   return (
-    <aside className="w-48 border-r border-[#1f2937] bg-[#0a0e1a] hidden md:flex flex-col shrink-0">
-      <nav className="p-4 space-y-1">
-        <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl bg-blue-500/10 border-l-2 border-blue-500 text-blue-400 font-medium text-sm transition-colors">
-          <Calendar className="w-4 h-4" />
-          Calendar
+    <aside className="app-sidebar" aria-label="Main Navigation">
+      <div className="app-sidebar__header">
+        <div className="app-sidebar__brand">
+          <ExpendfyLogo size={36} />
+          <BrandWordmark size="md" layout="stacked" />
+        </div>
+      </div>
+
+      <nav className="app-sidebar__nav">
+        <button
+          type="button"
+          className="app-sidebar__nav-item app-sidebar__nav-item--active"
+          aria-current="page"
+          tabIndex={0}
+        >
+          <CalendarIcon size={18} strokeWidth={2.2} className="app-sidebar__nav-icon" />
+          <span className="app-sidebar__nav-label">Calendar</span>
         </button>
       </nav>
     </aside>
-  );
+  )
 }
