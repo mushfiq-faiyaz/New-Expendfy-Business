@@ -1,31 +1,44 @@
+import { useState } from 'react'
 import { History, TrendingUp } from 'lucide-react'
 
 const MONEY = '৳0.00'
 
-export function QuickEntryModal() {
+type Panel = 'sales' | 'expense' | 'buy'
+
+export function QuickEntryModal({ onClose }: { onClose: () => void }) {
+  const [openPanel, setOpenPanel] = useState<Panel | null>(null)
+
+  const togglePanel = (panel: Panel) => {
+    setOpenPanel((prev) => (prev === panel ? null : panel))
+  }
+
   return (
     <>
-      <button type="button" className="quick-modal__backdrop" aria-label="Close quick entry" />
+      <button
+        type="button"
+        className="quick-modal__backdrop"
+        onClick={onClose}
+        aria-label="Close quick entry"
+      />
       <div className="quick-modal" role="dialog" aria-modal aria-labelledby="quick-entry-title">
         <div className="quick-modal__head">
           <h2 id="quick-entry-title" className="quick-modal__title">Quick entry</h2>
           <div className="quick-modal__head-actions">
-            <button
-              type="button"
-              className="quick-modal__icon-btn"
-              aria-label="View activity log"
-              title="Activity"
-            >
+            <button type="button" className="quick-modal__icon-btn" aria-label="View activity log" title="Activity">
               <History size={16} strokeWidth={2.2} />
             </button>
-            <button type="button" className="quick-modal__close" aria-label="Close">×</button>
+            <button type="button" className="quick-modal__close" onClick={onClose} aria-label="Close">×</button>
           </div>
         </div>
         <p className="quick-modal__date">15 January 2026</p>
 
         {/* ── 1. Sales ── */}
         <section className="quick-modal__section">
-          <button type="button" className="quick-modal__trigger quick-modal__trigger--row">
+          <button
+            type="button"
+            className={`quick-modal__trigger quick-modal__trigger--row ${openPanel === 'sales' ? 'quick-modal__trigger--open' : ''}`}
+            onClick={() => togglePanel('sales')}
+          >
             <span className="qm-row__badge qm-row__badge--sales" aria-hidden>
               <TrendingUp size={18} strokeWidth={2} />
             </span>
@@ -35,10 +48,10 @@ export function QuickEntryModal() {
             </span>
             <span className="qm-row__right">
               <span className="qm-row__value qm-row__value--sales">{MONEY}</span>
-              <span className="quick-modal__chev">›</span>
+              <span className={`quick-modal__chev ${openPanel === 'sales' ? 'quick-modal__chev--open' : ''}`}>›</span>
             </span>
           </button>
-          <div className="quick-modal__collapse" data-open="false">
+          <div className="quick-modal__collapse" data-open={openPanel === 'sales'}>
             <div className="quick-modal__collapse-inner">
               <div className="quick-modal__panel">
                 <div className="desc-field">
@@ -60,7 +73,11 @@ export function QuickEntryModal() {
 
         {/* ── 2. Expense ── */}
         <section className="quick-modal__section">
-          <button type="button" className="quick-modal__trigger quick-modal__trigger--row">
+          <button
+            type="button"
+            className={`quick-modal__trigger quick-modal__trigger--row ${openPanel === 'expense' ? 'quick-modal__trigger--open' : ''}`}
+            onClick={() => togglePanel('expense')}
+          >
             <span className="qm-row__badge qm-row__badge--expense" aria-hidden>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 19V5M5 12l7-7 7 7"/>
@@ -72,10 +89,10 @@ export function QuickEntryModal() {
             </span>
             <span className="qm-row__right">
               <span className="qm-row__value qm-row__value--expense">{MONEY}</span>
-              <span className="quick-modal__chev">›</span>
+              <span className={`quick-modal__chev ${openPanel === 'expense' ? 'quick-modal__chev--open' : ''}`}>›</span>
             </span>
           </button>
-          <div className="quick-modal__collapse" data-open="false">
+          <div className="quick-modal__collapse" data-open={openPanel === 'expense'}>
             <div className="quick-modal__collapse-inner">
               <div className="quick-modal__panel">
                 <div className="desc-field">
@@ -97,7 +114,11 @@ export function QuickEntryModal() {
 
         {/* ── 3. Buy ── */}
         <section className="quick-modal__section">
-          <button type="button" className="quick-modal__trigger quick-modal__trigger--row">
+          <button
+            type="button"
+            className={`quick-modal__trigger quick-modal__trigger--row ${openPanel === 'buy' ? 'quick-modal__trigger--open' : ''}`}
+            onClick={() => togglePanel('buy')}
+          >
             <span className="qm-row__badge qm-row__badge--buy" aria-hidden>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
@@ -109,10 +130,10 @@ export function QuickEntryModal() {
             </span>
             <span className="qm-row__right">
               <span className="qm-row__value qm-row__value--buy">{MONEY}</span>
-              <span className="quick-modal__chev">›</span>
+              <span className={`quick-modal__chev ${openPanel === 'buy' ? 'quick-modal__chev--open' : ''}`}>›</span>
             </span>
           </button>
-          <div className="quick-modal__collapse" data-open="false">
+          <div className="quick-modal__collapse" data-open={openPanel === 'buy'}>
             <div className="quick-modal__collapse-inner">
               <div className="quick-modal__panel">
                 <div className="desc-field">

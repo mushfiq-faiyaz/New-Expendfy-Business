@@ -7591,6 +7591,3 @@ body {
   }
 }
 
-/* TEMP — hide quick entry to inspect the calendar */
-.quick-modal,
-.quick-modal__backdrop { display: none !important; }
