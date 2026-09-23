@@ -1,4 +1,4 @@
-import { ArrowUpDown, Check, ChevronUp, X } from 'lucide-react'
+import { ArrowUpDown, ChevronUp, X } from 'lucide-react'
 
 export function EntriesGlanceModal() {
   return (
