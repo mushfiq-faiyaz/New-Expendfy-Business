@@ -1,4 +1,4 @@
-﻿import { useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 import { CalendarCheck, Info, Plus } from 'lucide-react'
 import { Calendar } from './components/Calendar'
 import { Header } from './components/Header'
@@ -6,28 +6,56 @@ import { Sidebar } from './components/Sidebar'
 import { QuickEntryModal } from './components/QuickEntryModal'
 import { SideDrawer } from './components/SideDrawer'
 import { ActivitySheet } from './components/ActivitySheet'
-import { EditHistoryModal } from './components/EditHistoryModal'
-import { EntriesGlanceModal } from './components/EntriesGlanceModal'
-import { ExpenseSheet } from './components/ExpenseSheet'
-import { IncomeSheet } from './components/IncomeSheet'
+import { loadTheme, saveTheme } from './storage'
+import type { ThemeMode } from './types'
 
-// Static UI toggles for the OTHER overlays (still UI-only, no logic yet)
-const SHOW_SIDE_DRAWER   = false
-const SHOW_ACTIVITY      = false
-const SHOW_EDIT_HISTORY  = false
-const SHOW_GLANCE        = false
-const SHOW_EXPENSE_SHEET = false
-const SHOW_INCOME_SHEET  = false
+const CURRENCY_KEY = 'expendfy_currency'
+const TIME_FORMAT_KEY = 'expendfy_time_format'
+const CURRENCY_OPTIONS = ['TRY', 'USD', 'EUR', 'GBP', 'INR', 'JPY', 'AED', 'BDT'] as const
 
 export default function App() {
-  const [quickEntryOpen, setQuickEntryOpen] = useState(true)
+  const [quickEntryOpen, setQuickEntryOpen] = useState(false)
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  const [monthActivityOpen, setMonthActivityOpen] = useState(false)
+
+  const [currency, setCurrency] = useState<string>(
+    () => localStorage.getItem(CURRENCY_KEY) || 'TRY',
+  )
+  const [timeFormat, setTimeFormat] = useState<'12h' | '24h'>(
+    () => (localStorage.getItem(TIME_FORMAT_KEY) as '12h' | '24h') || '24h',
+  )
+  const [theme, setTheme] = useState<ThemeMode>(() => loadTheme())
+
+  // Apply theme to <html> and meta theme-color
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme)
+    const metaTheme = document.querySelector('meta[name="theme-color"]')
+    if (metaTheme) {
+      metaTheme.setAttribute('content', theme === 'light' ? '#f8fafc' : '#0f0f0f')
+    }
+  }, [theme])
+
+  function handleCurrencyChange(nextCurrency: string): void {
+    setCurrency(nextCurrency)
+    localStorage.setItem(CURRENCY_KEY, nextCurrency)
+  }
+
+  function handleTimeFormatChange(fmt: '12h' | '24h'): void {
+    setTimeFormat(fmt)
+    localStorage.setItem(TIME_FORMAT_KEY, fmt)
+  }
+
+  function handleThemeChange(nextTheme: ThemeMode): void {
+    setTheme(nextTheme)
+    saveTheme(nextTheme)
+  }
 
   return (
     <div className="app">
       <Sidebar />
 
       <div className="app-body">
-        <Header />
+        <Header onMenuClick={() => setDrawerOpen(true)} />
 
         <main className="app-main">
           <div className="calendar-action-bar">
@@ -52,16 +80,27 @@ export default function App() {
         </main>
       </div>
 
-      {/* Quick Entry - controlled by state now */}
-      {quickEntryOpen && <QuickEntryModal onClose={() => setQuickEntryOpen(false)} />}
+      <SideDrawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        onOpenActivity={() => setMonthActivityOpen(true)}
+        currency={currency}
+        currencyOptions={[...CURRENCY_OPTIONS]}
+        onCurrencyChange={handleCurrencyChange}
+        timeFormat={timeFormat}
+        onTimeFormatChange={handleTimeFormatChange}
+        theme={theme}
+        onThemeChange={handleThemeChange}
+      />
 
-      {/* Other overlays - still UI-only shells */}
-      {SHOW_SIDE_DRAWER   && <SideDrawer />}
-      {SHOW_ACTIVITY      && <ActivitySheet title="Today's Activity" />}
-      {SHOW_EDIT_HISTORY  && <EditHistoryModal side="expense" />}
-      {SHOW_GLANCE        && <EntriesGlanceModal />}
-      {SHOW_EXPENSE_SHEET && <ExpenseSheet />}
-      {SHOW_INCOME_SHEET  && <IncomeSheet />}
+      <ActivitySheet
+        open={monthActivityOpen}
+        title="Monthly Activity"
+        subtitle="January 2026"
+        onClose={() => setMonthActivityOpen(false)}
+      />
+
+      {quickEntryOpen && <QuickEntryModal onClose={() => setQuickEntryOpen(false)} />}
     </div>
   )
 }
